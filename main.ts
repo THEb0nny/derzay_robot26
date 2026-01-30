@@ -156,16 +156,16 @@ function ReturnToCrossRowCubes() {
 
 // Главная функция решения задачи
 function Main() {
-    manipulatorMotor.setInverted(true); // Включить реверс мотора манипулятора
-    unloadingMechanismMotor.setInverted(true); // Включить реверс мотора механизма сброса
-    Manipulator(ManipulatorState.Down, true, 40); // Предустановить манипулятор в положение раскрытия
-    UnloadingMechanism(UnloadingMechanismState.Up, true, 10); // Предустановить механизм сброса в положение закрыт
     for (let i = 0; i < 10; i++) { // Опрос датчиков, чтобы те включились
         sensors.getNormalizedReflectionValue(LineSensor.Left);
         sensors.getNormalizedReflectionValue(LineSensor.Right);
         colorSensor.rgbRaw();
         pause(5);
     }
+    manipulatorMotor.setInverted(true); // Включить реверс мотора манипулятора
+    unloadingMechanismMotor.setInverted(true); // Включить реверс мотора механизма сброса
+    Manipulator(ManipulatorState.Down, true, 40); // Предустановить манипулятор в положение раскрытия
+    UnloadingMechanism(UnloadingMechanismState.Up, true, 10); // Предустановить механизм сброса в положение закрыт
     brick.printString("RUN", 7, 13);
     brick.buttonEnter.pauseUntil(ButtonEvent.Pressed); // Ожидание нажатие кнопки
     brick.clearScreen(); // Очистить экран
