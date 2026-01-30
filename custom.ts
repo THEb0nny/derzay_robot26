@@ -1,4 +1,9 @@
-enum ManipState {
+enum ManipulatorState {
+    Down,
+    Up
+}
+
+enum UnloadingMechanismState {
     Down,
     Up
 }

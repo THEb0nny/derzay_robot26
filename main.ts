@@ -63,20 +63,24 @@ let colors: number[] = []; // Массив, чтобы сохранить цве
 function CheckColor(time: number): number {
     let colorSamples: number[] = [];
     control.timer1.reset();
+    let prevTime = control.millis();
     while (control.timer1.millis() < time) {
+        const currTime = control.millis();
+        const dt = currTime - prevTime;
+        prevTime = currTime;
         const rgb = sensors.getNormalizeRgb(colorSensor);
         const hsvl = sensors.convertRgbToHsvl(rgb);
         const color = sensors.convertHsvlToColorNum(hsvl, sensors.getHsvlToColorNumParams(colorSensor));
         colorSamples.push(color);
-        pause(10);
+        control.pauseUntilTime(currTime, 10);
     }
     const colorResult = custom.mostFrequentNumber(colorSamples);
     return colorResult;
 }
 
 // Манипулятор захвата
-function Manipulator(state: ManipState, hold: boolean, v: number = 50) {
-    const dir = state == ManipState.Down ? 1 : -1;
+function Manipulator(state: ManipulatorState, hold: boolean, v: number = 50) {
+    const dir = state == ManipulatorState.Down ? 1 : -1;
     manipulatorMotor.run(Math.abs(v) * dir);
     pause(10);
     manipulatorMotor.pauseUntilStalled();
@@ -85,8 +89,8 @@ function Manipulator(state: ManipState, hold: boolean, v: number = 50) {
 }
 
 // Механизм сброса
-function UnloadingMechanism(state: ManipState, hold: boolean, v: number = 30) {
-    const dir = state == ManipState.Down ? 1 : -1;
+function UnloadingMechanism(state: UnloadingMechanismState, hold: boolean, v: number = 30) {
+    const dir = state == UnloadingMechanismState.Down ? 1 : -1;
     unloadingMechanismMotor.run(Math.abs(v) * dir);
     pause(10);
     unloadingMechanismMotor.pauseUntilStalled();
@@ -116,11 +120,11 @@ function CubeRow(firstCube: number, secondCube: number) {
 
 // Функция захвата и определение одного кубика
 function CubeCapture(cubeNumber: number) {
-    Manipulator(ManipState.Up, true, 50); // Манипулятор поднять для захвата N-го кубика
+    Manipulator(ManipulatorState.Up, true, 50); // Манипулятор поднять для захвата N-го кубика
     colors.push(CheckColor(500)); // Запрашиваем и сохраняем цвет в массив
     brick.printValue(`color${cubeNumber + 1}`, colors[cubeNumber], cubeNumber + 1); // Выводим на экран цвет N-го кубика
     VoiceColor(colors[cubeNumber]); // Озвучиваем цвет N-го кубика
-    Manipulator(ManipState.Down, true, 50); // Отпускаем манипулятор после определения цвета кубика
+    Manipulator(ManipulatorState.Down, true, 50); // Отпускаем манипулятор после определения цвета кубика
 }
 
 // Функция, для возвращения к перекрёстку ряда кубиков
@@ -137,8 +141,8 @@ function ReturnToCrossRowCubes() {
 function Main() {
     manipulatorMotor.setInverted(true); // Включить реверс мотора манипулятора
     unloadingMechanismMotor.setInverted(true); // Включить реверс мотора механизма сброса
-    Manipulator(ManipState.Down, true, 40); // Предустановить манипулятор в положение раскрытия
-    UnloadingMechanism(ManipState.Up, true, 10); // Предустановить механизм сброса в положение закрыт
+    Manipulator(ManipulatorState.Down, true, 40); // Предустановить манипулятор в положение раскрытия
+    UnloadingMechanism(UnloadingMechanismState.Up, true, 10); // Предустановить механизм сброса в положение закрыт
     for (let i = 0; i < 10; i++) { // Опрос датчиков, чтобы те включились
         sensors.getNormalizedReflectionValue(LineSensor.Left);
         sensors.getNormalizedReflectionValue(LineSensor.Right);
@@ -238,10 +242,10 @@ function Main() {
         pause(50);
         chassis.linearDistMove(-50, 60, MotionBraking.Hold); // Немного назад жопкой
 
-        // Сброс
-        UnloadingMechanism(ManipState.Down, false);
+        // Сброс кубика
+        UnloadingMechanism(UnloadingMechanismState.Down, false);
         pause(100);
-        UnloadingMechanism(ManipState.Up, true);
+        UnloadingMechanism(UnloadingMechanismState.Up, true);
 
         motions.lineFollowToCrossIntersection(AfterLineMotion.SmoothRolling, { v: 70, Kp: 0.3, Kd: 0.5 }); // Двигаемся обратно до вершины
         navigation.setCurrentDirection(3); // Устанавливаем в какое направление мы теперь повёрнуты
@@ -328,10 +332,10 @@ function Main() {
         pause(50);
         chassis.linearDistMove(-50, 60, MotionBraking.Hold); // Немного назад жопкой
 
-        // Сброс
-        UnloadingMechanism(ManipState.Down, false);
+        // Сброс кубика
+        UnloadingMechanism(UnloadingMechanismState.Down, false);
         pause(100);
-        UnloadingMechanism(ManipState.Up, true);
+        UnloadingMechanism(UnloadingMechanismState.Up, true);
 
         motions.lineFollowToCrossIntersection(AfterLineMotion.SmoothRolling, { v: 70, Kp: 0.3, Kd: 0.5 }); // Двигаемся обратно до вершины
         navigation.setCurrentDirection(3); // Устанавливаем в какое направление мы теперь повёрнуты
