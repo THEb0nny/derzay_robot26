@@ -135,7 +135,7 @@ function ReturnToCrossRowCubes() {
 function Main() {
     manipulatorMotor.setInverted(true); // Включить реверс мотора манипулятора
     unloadingMechanismMotor.setInverted(true); // Включить реверс мотора механизма сброса
-    Manipulator(ManipState.Down, true, 50); // Предустановить манипулятор в положение раскрытия
+    Manipulator(ManipState.Down, true, 40); // Предустановить манипулятор в положение раскрытия
     UnloadingMechanism(ManipState.Up, true, 10); // Предустановить механизм сброса в положение закрыт
     for (let i = 0; i < 10; i++) { // Опрос датчиков, чтобы те включились
         sensors.getNormalizedReflectionValue(LineSensor.Left);
@@ -173,6 +173,7 @@ function Main() {
     motions.rampLineFollowToDistanceByTwoSensors(150, 50, 70, MotionBraking.Hold, { vStart: 30, vMax: 60, vFinish: 20, Kp: 0.3, Kd: 0.5 }); // Подъезжаем плавно к 1 кубику
 
     CubeRow(0, 1); // Захватываем первый ряд кубиков (1 и 2 кубики)
+    console.log(`colors: ${colors.join(", ")}`); // Записываем в консоль все цвета 4х кубиков
 
     ReturnToCrossRowCubes(); // Возвращаемся к перекрёстку ряда кубиков
 
@@ -260,6 +261,7 @@ function Main() {
     motions.rampLineFollowToDistanceByTwoSensors(150, 50, 70, MotionBraking.Hold, { vStart: 30, vMax: 60, vFinish: 20, Kp: 0.3, Kd: 0.5 }); // Подъезжаем плавно к 1 кубику
 
     CubeRow(4, 5); // Захватываем второй ряд кубиков (5 и 6 кубики)
+    console.log(`colors: ${colors.join(", ")}`); // Записываем в консоль все цвета 4х кубиков
 
     ReturnToCrossRowCubes(); // Возвращаемся к перекрёстку ряда кубиков
 
@@ -334,6 +336,7 @@ function Main() {
         music.playSoundEffectUntilDone(sounds.communicationGo); // Чисто тест, что дальше идёт продолжение
     }
 
+    //// ДАЛЬШЕ
     // Едем домой с перекрёсток / вершин 0 или 1 или 2!!!
     chassis.spinTurn(90, 70); // Поворачиваемся от стенки вправо
     motions.rampLineFollowToDistanceByTwoSensors(500, 100, 100, MotionBraking.Continue, { vStart: 30, vMax: 80, vFinish: 60, Kp: 0.3, Kd: 0.5 }) // Движемся на расстояние
