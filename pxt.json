@@ -1,0 +1,28 @@
+{
+    "name": "derzay_robot26",
+    "description": "",
+    "dependencies": {
+        "ev3": "*",
+        "promrobo21": "github:theb0nny/makecode-ev3-promrobo21#v7.2.7"
+    },
+    "files": [
+        "main.ts",
+        "README.md",
+        "custom.ts"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "targetVersions": {
+        "branch": "v1.4.41",
+        "tag": "v1.4.41",
+        "commits": "https://github.com/microsoft/pxt-ev3/commits/82439e598922900ad522dff819e596ede4a11dda",
+        "target": "1.4.41",
+        "pxt": "9.3.19",
+        "targetId": "ev3"
+    },
+    "supportedTargets": [
+        "ev3"
+    ],
+    "preferredEditor": "tsprj"
+}

@@ -1,0 +1,4 @@
+enum ManipState {
+    Down,
+    Up
+}
