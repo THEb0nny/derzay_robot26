@@ -25,7 +25,7 @@ sensors.setHsvlToColorNumParams(colorSensor, {
     yellowBoundary: 100,
     greenBoundary: 180,
     blueBoundary: 270
-});
+}); // Установить границы преобразования hsvl в цветовые коды
 
 navigation.setNodesNumber(9); // Количество узловых точек, используем не все
 
