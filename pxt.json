@@ -1,6 +1,6 @@
 {
     "name": "derzay_robot26",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "",
     "dependencies": {
         "ev3": "*",
