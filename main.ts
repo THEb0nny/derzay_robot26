@@ -4,7 +4,7 @@ chassis.setWheelDiametr(62.4); // Установка диаметра колёс
 chassis.setBaseLength(180); // Установка расстония между центрами колёс
 
 sensors.setNxtLightSensorsAsLineSensors(sensors.nxtLight2, sensors.nxtLight3); // Установка датчиков отражения в качестве датчиков линии
-sensors.setLineSensorsRawRefValues(2028, 1304, 2328, 1600); // Установка калибровочных значений отражения для нормализации отражения
+sensors.setLineSensorsRawRefValues(2068, 1332, 2324, 1620); // Установка калибровочных значений отражения для нормализации отражения
 
 motions.setDistRollingAfterIntersection(60); // Установка расстояния прокатки после опредления перекрёстка при движении по линии
 motions.setMinPwrAtEndMovement(30); // Установка минимальной скорости при завершении движений
@@ -17,16 +17,16 @@ const unloadingMechanismMotor = motors.mediumD; // Переменная объе
 const colorSensor = sensors.color4; // Установка датчика цвета определяющий цвет кубика
 
 sensors.setColorSensorMinRgbValues(colorSensor, 10, 10, 10); // Значения датчика цвета когда ничего нет
-sensors.setColorSensorMaxRgbValues(colorSensor, 108, 108, 109); // Значения датчика цвета для белоо кубика
+sensors.setColorSensorMaxRgbValues(colorSensor, 87, 90, 94); // Значения датчика цвета для белоо кубика
 sensors.setHsvlToColorNumParams(colorSensor, {
-    colorBoundary: 50,
-    whiteBoundary: 4,
-    blackBoundary: 1,
-    redBoundary: 98,
-    brownBoundary: 99,
-    yellowBoundary: 100,
-    greenBoundary: 180,
-    blueBoundary: 270
+    colorBoundary: 50, // S
+    whiteBoundary: 4, // V
+    blackBoundary: 1, // V
+    redBoundary: 98, // H
+    brownBoundary: 99, // H
+    yellowBoundary: 100, // H
+    greenBoundary: 180, // H
+    blueBoundary: 270 // H
 }); // Установить границы преобразования hsvl в цветовые коды
 
 navigation.setNodesNumber(9); // Количество узловых точек, используем не все
@@ -79,7 +79,7 @@ function GetColor(debug: boolean = false): number {
 }
 
 // Проверка цвета
-function CheckColor(time: number): number {
+function CheckColor(time: number, debug: boolean): number {
     let colorSamples: number[] = [];
     control.timer1.reset();
     let prevTime = control.millis();
@@ -87,7 +87,7 @@ function CheckColor(time: number): number {
         const currTime = control.millis();
         const dt = currTime - prevTime;
         prevTime = currTime;
-        const color = GetColor();
+        const color = GetColor(debug);
         colorSamples.push(color);
         control.pauseUntilTime(currTime, 10);
     }
@@ -138,7 +138,7 @@ function CubeRow(firstCube: number, secondCube: number) {
 // Функция захвата и определение одного кубика
 function CubeCapture(cubeNumber: number) {
     Manipulator(ManipulatorState.Up, true, 50); // Манипулятор поднять для захвата N-го кубика
-    colors.push(CheckColor(500)); // Запрашиваем и сохраняем цвет в массив
+    colors.push(CheckColor(500, false)); // Запрашиваем и сохраняем цвет в массив
     brick.printValue(`color${cubeNumber + 1}`, colors[cubeNumber], cubeNumber + 1); // Выводим на экран цвет N-го кубика
     VoiceColor(colors[cubeNumber]); // Озвучиваем цвет N-го кубика
     Manipulator(ManipulatorState.Down, true, 50); // Отпускаем манипулятор после определения цвета кубика
@@ -176,8 +176,7 @@ function Main() {
 
     // Цвета для проверки
     // while (true) {
-    //     const color = CheckColor(50);
-    //     brick.printValue("color", color, 1);
+    //     const color = CheckColor(50, true);
     //     pause(10);
     // }
 
@@ -189,7 +188,7 @@ function Main() {
     pause(50);
 
     chassis.spinTurn(-90, 70); // Поворачиваемся влево к зонам с кубиками
-    motions.lineFollowToCrossIntersection(AfterLineMotion.SmoothRolling, { v: 60, Kp: 0.3, Kd: 0.5  }); // Проезжаем ещё перекрёсток
+    motions.lineFollowToCrossIntersection(AfterLineMotion.SmoothRolling, { v: 60, Kp: 0.3, Kd: 0.5 }); // Проезжаем ещё перекрёсток
     pause(50);
     chassis.spinTurn(90, 70); // Поворачиваемся вправо к кубикам
     pause(50);
@@ -211,7 +210,7 @@ function Main() {
 
     CubeRow(2, 3); // Захватываем второй ряд кубиков (3 и 4 кубики)
     console.log(`colors: ${colors.join(", ")}`); // Записываем в консоль все цвета 4х кубиков
-    
+
     ReturnToCrossRowCubes(); // Возвращаемся к перекрёстку ряда кубиков
 
     // Двигаемся к перекрёстку / вершине 3
@@ -266,22 +265,26 @@ function Main() {
 
         motions.lineFollowToCrossIntersection(AfterLineMotion.SmoothRolling, { v: 70, Kp: 0.3, Kd: 0.5 }); // Двигаемся обратно до вершины
         navigation.setCurrentDirection(3); // Устанавливаем в какое направление мы теперь повёрнуты
-        music.playSoundEffectUntilDone(sounds.communicationGo); // Чисто тест, что дальше идёт продолжение
+        music.playSoundEffect(sounds.communicationGo); // Чисто тест, что дальше идёт продолжение
+        pause(100);
     }
 
 
     //// ДАЛЬШЕ
     // Движемся до перекрёстка/вершины 3
-    motions.rampLineFollowToDistanceByTwoSensors(450, 100, 100, MotionBraking.Continue, { vStart: 30, vMax: 80, vFinish: 70, Kp: 0.3, Kd: 0.5 }) // Движемся на расстояние
+    chassis.spinTurn(-90, 70); // Поворачиваемся влево к зонам с кубиками
+    motions.rampLineFollowToDistanceByTwoSensors(420, 100, 100, MotionBraking.Continue, { vStart: 30, vMax: 80, vFinish: 70, Kp: 0.3, Kd: 0.5 }) // Движемся на расстояние
     motions.lineFollowToCrossIntersection(AfterLineMotion.SmoothRolling, { v: 70, Kp: 0.3, Kd: 0.5 }); // На следующем перекрёстке останавливаемся
     pause(50);
     chassis.spinTurn(-90, 70); // Поворачиваемся влево к зонам с кубиками
-    motions.lineFollowToCrossIntersection(AfterLineMotion.LineContinueRoll, { v: 60, Kp: 0.3, Kd: 0.5 }); // Проезжаем ещё перекрёсток
+    for (let i = 0; i < 2; i++) {
+        motions.lineFollowToCrossIntersection(AfterLineMotion.LineContinueRoll, { v: 60, Kp: 0.3, Kd: 0.5 }); // Проезжаем ещё перекрёсток
+    }
     motions.lineFollowToCrossIntersection(AfterLineMotion.SmoothRolling); // Проезжаем ещё перекрёсток
     pause(50);
     chassis.spinTurn(90, 70); // Поворачиваемся вправо к кубикам
     pause(50);
-    motions.rampLineFollowToDistanceByTwoSensors(150, 50, 70, MotionBraking.Hold, { vStart: 30, vMax: 60, vFinish: 20, Kp: 0.3, Kd: 0.5 }); // Подъезжаем плавно к 1 кубику
+    motions.rampLineFollowToDistanceByTwoSensors(175, 50, 70, MotionBraking.Hold, { vStart: 30, vMax: 60, vFinish: 20, Kp: 0.3, Kd: 0.5 }); // Подъезжаем плавно к 1 кубику
 
     CubeRow(4, 5); // Захватываем второй ряд кубиков (5 и 6 кубики)
     console.log(`colors: ${colors.join(", ")}`); // Записываем в консоль все цвета 4х кубиков
@@ -305,7 +308,7 @@ function Main() {
     // Двигаемся к перекрёстку / вершине 3
     chassis.spinTurn(-90, 70); // Поворачиваемся влево
     pause(50);
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 3; i++) {
         motions.lineFollowToCrossIntersection(AfterLineMotion.LineContinueRoll, { v: 60, Kp: 0.3, Kd: 0.5 });
     }
     motions.lineFollowToCrossIntersection(AfterLineMotion.SmoothRolling, { v: 60 });
