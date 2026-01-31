@@ -363,7 +363,7 @@ function Main() {
     }
 
     //// ДАЛЬШЕ
-    // Едем домой с перекрёсток / вершин 0 или 1 или 2!!!
+    // Едем домой с перекрёстока / вершин 0 или 1 или 2!!!
     chassis.spinTurn(90, 70); // Поворачиваемся от стенки вправо
     motions.rampLineFollowToDistanceByTwoSensors(500, 100, 100, MotionBraking.Continue, { vStart: 30, vMax: 80, vFinish: 60, Kp: 0.3, Kd: 0.5 }) // Движемся на расстояние
     motions.lineFollowToCrossIntersection(AfterLineMotion.NoStop, { v: 60, Kp: 0.3, Kd: 0.5 }); // Движемся до линии (перекрёстка) базы
