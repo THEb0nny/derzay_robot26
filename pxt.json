@@ -11,9 +11,7 @@
         "README.md",
         "custom.ts"
     ],
-    "testFiles": [
-        "test.ts"
-    ],
+    "testFiles": [],
     "targetVersions": {
         "branch": "v1.4.41",
         "tag": "v1.4.41",
