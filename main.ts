@@ -4,7 +4,7 @@ chassis.setWheelDiametr(62.4); // Установка диаметра колёс
 chassis.setBaseLength(180); // Установка расстония между центрами колёс
 
 sensors.setNxtLightSensorsAsLineSensors(sensors.nxtLight2, sensors.nxtLight3); // Установка датчиков отражения в качестве датчиков линии
-sensors.setLineSensorsRawRefValues(2068, 1332, 2324, 1620); // Установка калибровочных значений отражения для нормализации отражения
+sensors.setLineSensorsRawRefValues(2080, 1312, 2340, 1580); // Установка калибровочных значений отражения для нормализации отражения
 
 motions.setDistRollingAfterIntersection(60); // Установка расстояния прокатки после опредления перекрёстка при движении по линии
 motions.setMinPwrAtEndMovement(30); // Установка минимальной скорости при завершении движений
@@ -25,7 +25,7 @@ sensors.setHsvlToColorNumParams(colorSensor, {
     redBoundary: 98, // H
     brownBoundary: 99, // H
     yellowBoundary: 100, // H
-    greenBoundary: 180, // H
+    greenBoundary: 210, // H
     blueBoundary: 270 // H
 }); // Установить границы преобразования hsvl в цветовые коды
 
@@ -182,7 +182,7 @@ function Main() {
 
     chassis.accelStartLinearDistMove(30, 80, 100, 100); // Плавный старт с стартовой зоны
     for (let i = 0; i < 3; i++) {  // Движемся по линии и проходим три перекрёстка без остановки
-        motions.lineFollowToCrossIntersection(AfterLineMotion.LineContinueRoll, { v: 80, Kp: 0.3, Kd: 0.5 });
+        motions.lineFollowToCrossIntersection(AfterLineMotion.LineContinueRoll, { v: 80, Kp: 0.2, Kd: 0.5 });
     }
     motions.lineFollowToCrossIntersection(AfterLineMotion.SmoothRolling); // На следующем перекрёстке останавливаемся
     pause(50);
@@ -192,7 +192,7 @@ function Main() {
     pause(50);
     chassis.spinTurn(90, 70); // Поворачиваемся вправо к кубикам
     pause(50);
-    motions.rampLineFollowToDistanceByTwoSensors(150, 50, 70, MotionBraking.Hold, { vStart: 30, vMax: 60, vFinish: 20, Kp: 0.3, Kd: 0.5 }); // Подъезжаем плавно к 1 кубику
+    motions.rampLineFollowToDistanceByTwoSensors(170, 50, 70, MotionBraking.Hold, { vStart: 30, vMax: 60, vFinish: 20, Kp: 0.3, Kd: 0.5 }); // Подъезжаем плавно к 1 кубику
 
     CubeRow(0, 1); // Захватываем первый ряд кубиков (1 и 2 кубики)
     console.log(`colors: ${colors.join(", ")}`); // Записываем в консоль все цвета 4х кубиков
@@ -206,7 +206,7 @@ function Main() {
     pause(50);
     chassis.spinTurn(90, 70); // Поворачиваемся вправо к 3 и 4 кубику
     pause(50);
-    motions.rampLineFollowToDistanceByTwoSensors(150, 50, 70, MotionBraking.Hold); // Подъезжаем плавно к 3 кубику
+    motions.rampLineFollowToDistanceByTwoSensors(170, 50, 70, MotionBraking.Hold); // Подъезжаем плавно к 3 кубику
 
     CubeRow(2, 3); // Захватываем второй ряд кубиков (3 и 4 кубики)
     console.log(`colors: ${colors.join(", ")}`); // Записываем в консоль все цвета 4х кубиков
@@ -248,6 +248,7 @@ function Main() {
         if (startMovementPos >= 3 || startMovementPos > targetPos) chassis.spinTurn(90, 70); // Повернуться к перекрёстку
         else if (startMovementPos < targetPos) chassis.spinTurn(-90, 70); // Повернуться к точке, находясь на 0 или 1 точке
         else chassis.spinTurn(180, 70); // Тот же самый цвет, а это значит повернуться жопкой
+        pause(50);
 
         navigation.setCurrentPositon(targetPos); // Сохраняем в каком месте мы теперь находимся, а вроде даже не нужно это!
 
@@ -266,7 +267,7 @@ function Main() {
         motions.lineFollowToCrossIntersection(AfterLineMotion.SmoothRolling, { v: 70, Kp: 0.3, Kd: 0.5 }); // Двигаемся обратно до вершины
         navigation.setCurrentDirection(3); // Устанавливаем в какое направление мы теперь повёрнуты
         music.playSoundEffect(sounds.communicationGo); // Чисто тест, что дальше идёт продолжение
-        pause(100);
+        pause(50);
     }
 
 
@@ -298,7 +299,7 @@ function Main() {
     pause(50);
     chassis.spinTurn(90, 70); // Поворачиваемся вправо к 3 и 4 кубику
     pause(50);
-    motions.rampLineFollowToDistanceByTwoSensors(150, 50, 70, MotionBraking.Hold); // Подъезжаем плавно к 3 кубику
+    motions.rampLineFollowToDistanceByTwoSensors(170, 50, 70, MotionBraking.Hold); // Подъезжаем плавно к 3 кубику
 
     CubeRow(6, 7); // Захватываем второй ряд кубиков (7 и 8 кубики)
     console.log(`colors: ${colors.join(", ")}`); // Записываем в консоль все цвета 4х кубиков
@@ -365,9 +366,9 @@ function Main() {
     //// ДАЛЬШЕ
     // Едем домой с перекрёстока / вершин 0 или 1 или 2!!!
     chassis.spinTurn(90, 70); // Поворачиваемся от стенки вправо
-    motions.rampLineFollowToDistanceByTwoSensors(500, 100, 100, MotionBraking.Continue, { vStart: 30, vMax: 80, vFinish: 60, Kp: 0.3, Kd: 0.5 }) // Движемся на расстояние
-    motions.lineFollowToCrossIntersection(AfterLineMotion.NoStop, { v: 60, Kp: 0.3, Kd: 0.5 }); // Движемся до линии (перекрёстка) базы
-    chassis.decelFinishLinearDistMove(60, 30, 170, 100, AfterMotion.HoldStop); // Заезжаем в базу плавным замедлением
+    motions.rampLineFollowToDistanceByTwoSensors(500, 100, 100, MotionBraking.Continue, { vStart: 30, vMax: 80, vFinish: 70, Kp: 0.3, Kd: 0.5 }) // Движемся на расстояние
+    motions.lineFollowToCrossIntersection(AfterLineMotion.NoStop, { v: 70, Kp: 0.3, Kd: 0.5 }); // Движемся до линии (перекрёстка) базы
+    chassis.decelFinishLinearDistMove(70, 30, 170, 100, AfterMotion.HoldStop); // Заезжаем в базу плавным замедлением
     music.playSoundEffectUntilDone(sounds.communicationGameOver); // Издаём звук завершения
 }
 
