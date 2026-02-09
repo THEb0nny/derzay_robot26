@@ -19,7 +19,7 @@ const colorSensor = sensors.color4; // Установка датчика цве�
 sensors.setColorSensorMinRgbValues(colorSensor, 10, 10, 10); // Значения датчика цвета когда ничего нет
 sensors.setColorSensorMaxRgbValues(colorSensor, 87, 90, 94); // Значения датчика цвета для белоо кубика
 sensors.setHsvlToColorNumParams(colorSensor, {
-    colorBoundary: 50, // S
+    coloredBoundary: 50, // S
     whiteBoundary: 4, // V
     blackBoundary: 1, // V
     redBoundary: 98, // H
@@ -367,7 +367,7 @@ function Main() {
     // Едем домой с перекрёстока / вершин 0 или 1 или 2!!!
     chassis.spinTurn(90, 70); // Поворачиваемся от стенки вправо
     motions.rampLineFollowToDistanceByTwoSensors(500, 100, 100, MotionBraking.Continue, { vStart: 30, vMax: 80, vFinish: 70, Kp: 0.3, Kd: 0.5 }) // Движемся на расстояние
-    motions.lineFollowToCrossIntersection(AfterLineMotion.NoStop, { v: 70, Kp: 0.3, Kd: 0.5 }); // Движемся до линии (перекрёстка) базы
+    motions.lineFollowToCrossIntersection(AfterLineMotion.Continue, { v: 70, Kp: 0.3, Kd: 0.5 }); // Движемся до линии (перекрёстка) базы
     chassis.decelFinishLinearDistMove(70, 30, 170, 100, AfterMotion.HoldStop); // Заезжаем в базу плавным замедлением
     music.playSoundEffectUntilDone(sounds.communicationGameOver); // Издаём звук завершения
 }
